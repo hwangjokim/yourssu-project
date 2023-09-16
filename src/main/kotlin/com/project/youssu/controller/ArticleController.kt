@@ -1,11 +1,10 @@
 package com.project.youssu.controller
 
-import com.project.youssu.dto.UserRequest
-import com.project.youssu.dto.UserResponse
+import com.project.youssu.dto.ArticleRequest
+import com.project.youssu.dto.ArticleResponse
 import com.project.youssu.exception.IllegalException
 import com.project.youssu.exception.IllegalRequestParamException
-import com.project.youssu.service.UserService
-import org.slf4j.LoggerFactory
+import com.project.youssu.service.ArticleService
 import org.springframework.validation.BindingResult
 import org.springframework.validation.FieldError
 import org.springframework.web.bind.annotation.PostMapping
@@ -17,18 +16,16 @@ import javax.validation.Valid
 
 
 @RestController
-@RequestMapping("/signup")
-class SignUpController(private val service: UserService) {
-
-    private val logger = LoggerFactory.getLogger(javaClass)!!
+@RequestMapping("/article")
+class ArticleController(private val service: ArticleService) {
 
     @PostMapping
-    fun signUp(@RequestBody @Valid request: UserRequest,
-               bindingResult: BindingResult,
-               servletRequest: HttpServletRequest) : UserResponse{
-
+    fun postArticle(@RequestBody @Valid request:ArticleRequest,
+                    bindingResult: BindingResult,
+                    servletRequest: HttpServletRequest) : ArticleResponse{
         if (bindingResult.hasErrors())
             throw IllegalRequestParamException(servletRequest, bindingResult)
-        return service.signUp(request, servletRequest.requestURI)
+
+        return service.saveArticle(request, servletRequest.requestURI)
     }
 }

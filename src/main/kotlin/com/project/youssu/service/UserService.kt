@@ -7,9 +7,11 @@ import com.project.youssu.exception.IllegalException
 import com.project.youssu.repository.UserRepository
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
+import javax.transaction.Transactional
 
 
 @Service
+@Transactional
 class UserService(private val repository: UserRepository) {
 
     fun signUp(request : UserRequest, uri : String) : UserResponse{
