@@ -12,10 +12,10 @@ data class Article(
     @Id
     @GeneratedValue
     val articleId: Long,
-    val createdAt: LocalDateTime,
-    val updatedAt: LocalDateTime,
-    val content: String,
-    val title: String,
+    var createdAt: LocalDateTime,
+    var updatedAt: LocalDateTime,
+    var content: String,
+    var title: String,
     @ManyToOne
     @JoinColumn(name = "user_id")
     val user: User
