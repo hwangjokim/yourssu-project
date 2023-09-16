@@ -15,8 +15,7 @@ data class Article(
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     val user: User,
-
+) {
     @OneToMany(mappedBy = "article", cascade = [CascadeType.REMOVE], orphanRemoval = true)
     val comments: MutableList<Comment> = mutableListOf()
-
-)
+}

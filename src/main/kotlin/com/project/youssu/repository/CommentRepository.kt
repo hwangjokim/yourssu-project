@@ -8,9 +8,6 @@ import org.springframework.data.repository.query.Param
 interface CommentRepository : JpaRepository<Comment, Long> {
     fun save(comment: Comment) : Comment
 
-    @Query("select c from Comment c join fetch c.article where c.commentId = :id ")
+    @Query("select c from Comment c join fetch c.article join fetch c.user where c.commentId = :id ")
     fun findByCommentId(@Param("id") commentId: Long) : Comment?
-
-
-
 }

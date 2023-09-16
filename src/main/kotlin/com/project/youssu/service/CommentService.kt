@@ -34,8 +34,8 @@ class CommentService(private val repository: CommentRepository,
     }
 
     fun updateComment(request: CommentRequest, uri: String, articleId: Long, commentId: Long) : CommentResponse{
-        val user = getUser(request, uri)
         val comment = repository.findByCommentId(commentId) ?: throw IllegalException("댓글 번호가 잘못되었습니다.", uri)
+        val user = getUser(request, uri)
         if (user != comment.user)
             throw IllegalException("권한이 없는 댓글입니다.", uri)
         if (comment.article.articleId != articleId)
@@ -48,8 +48,8 @@ class CommentService(private val repository: CommentRepository,
     }
 
     fun deleteComment(request : DeleteAndWithdrawDTO, uri:String, articleId: Long, commentId: Long) : HttpStatus{
-        val user = getUser(request, uri)
         val comment = repository.findByCommentId(commentId) ?: throw IllegalException("댓글 번호가 잘못되었습니다.", uri)
+        val user = getUser(request, uri)
         if (user != comment.user)
             throw IllegalException("권한이 없는 댓글입니다.", uri)
         if (comment.article.articleId != articleId)

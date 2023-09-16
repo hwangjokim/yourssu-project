@@ -21,24 +21,20 @@ class CommentServiceTest {
     private lateinit var service: CommentService
 
     @Test
-    @Commit
     fun saveComment() {
         val request = CommentRequest("yourssu@example.com","password", "댓글2입니다!")
-        service.saveComment(request,"temp",16)
+        service.saveComment(request,"temp",48)
     }
 
     @Test
     @Commit
     fun updateComment() {
-        val request = CommentRequest("yourssu@example.com","password", "수정댓글2입니다!")
-        service.updateComment(request,"temp",16,24) //TODO: 쿼리 세번 나가는거 최적화
-
+        val request = CommentRequest("yourssu@example.com","password", "수정댓2글2입니다!")
+        service.updateComment(request,"temp",48,49)
     }
 
     @Test
-    @Commit
     fun deleteComment() {
-
         val request= DeleteAndWithdrawDTO("yourssu@example.com","password")
         service.deleteComment(request, "temp", 16, 24)
     }

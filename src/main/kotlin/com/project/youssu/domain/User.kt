@@ -16,9 +16,12 @@ data class User(
     val updatedAt: LocalDateTime,
     val email: String,
     val password: String,
-    val username: String,
-
+    val username: String
+){
     @OneToMany(mappedBy = "user", cascade = [CascadeType.REMOVE], orphanRemoval = true)
     val articles: MutableList<Article> = mutableListOf()
 
-)
+    @OneToMany(mappedBy = "user", cascade = [CascadeType.REMOVE], orphanRemoval = true)
+    val comments: MutableList<Comment> = mutableListOf()
+
+}
