@@ -1,21 +1,18 @@
 package com.project.youssu.service
 
 import com.project.youssu.domain.User
-import com.project.youssu.dto.SignUpRequest
-import com.project.youssu.dto.SignUpResponse
+import com.project.youssu.dto.UserRequest
+import com.project.youssu.dto.UserResponse
 import com.project.youssu.exception.IllegalException
-import com.project.youssu.repository.SignUpRepository
+import com.project.youssu.repository.UserRepository
 import org.springframework.stereotype.Service
-import org.springframework.web.context.request.RequestContextHolder
-import org.springframework.web.context.request.ServletRequestAttributes
 import java.time.LocalDateTime
-import javax.servlet.http.HttpServletRequest
 
 
 @Service
-class SignUpService(private val repository: SignUpRepository) {
+class UserService(private val repository: UserRepository) {
 
-    fun signUp(request : SignUpRequest, uri : String) : SignUpResponse{
+    fun signUp(request : UserRequest, uri : String) : UserResponse{
         validateDuplication(request.username, request.email, uri)
         val saved = repository.save(
             User(
@@ -27,7 +24,7 @@ class SignUpService(private val repository: SignUpRepository) {
                 username = request.username
             )
         )
-        return SignUpResponse(saved.email, saved.username)
+        return UserResponse(saved.email, saved.username)
     }
 
     fun validateDuplication(username : String, email: String, uri: String){

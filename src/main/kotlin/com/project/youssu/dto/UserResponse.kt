@@ -1,6 +1,6 @@
 package com.project.youssu.dto
 
-data class SignUpResponse(
+data class UserResponse(
     val email:String,
     val username:String
 )
