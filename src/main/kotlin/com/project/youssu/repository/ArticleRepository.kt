@@ -8,4 +8,5 @@ interface ArticleRepository : JpaRepository<Article, Long> {
 
 
     fun findByArticleId(id: Long) : Article? //Update에 사용할 예정
+
 }

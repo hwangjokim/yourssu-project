@@ -4,9 +4,11 @@ import com.project.youssu.domain.Article
 import com.project.youssu.domain.User
 import com.project.youssu.dto.ArticleRequest
 import com.project.youssu.dto.ArticleResponse
+import com.project.youssu.dto.DeleteAndWithdrawDTO
 import com.project.youssu.exception.IllegalException
 import com.project.youssu.repository.ArticleRepository
 import com.project.youssu.repository.UserRepository
+import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
 import javax.transaction.Transactional
@@ -29,6 +31,11 @@ class ArticleService(private val articleRepository: ArticleRepository,
             ?: throw IllegalException("사용자 정보가 일치하지 않습니다.", uri)
     }
 
+    private fun getUser(request: DeleteAndWithdrawDTO, uri: String): User {
+        return userRepository.findByEmailAndPassword(request.email, request.password)
+            ?: throw IllegalException("사용자 정보가 일치하지 않습니다.", uri)
+    }
+
     fun updateArticle(request: ArticleRequest, uri:String, articleId:Long) : ArticleResponse{
         val user = getUser(request, uri)
         val article:Article = articleRepository.findByArticleId(articleId) ?: throw IllegalException("게시글 번호가 유효하지 않습니다.", uri)
@@ -41,6 +48,19 @@ class ArticleService(private val articleRepository: ArticleRepository,
         article.updatedAt = LocalDateTime.now()
 
         return ArticleResponse(article.articleId, user.email, article.title, article.content)
+    }
+
+    fun deleteArticle(request: DeleteAndWithdrawDTO, uri: String, articleId: Long) : HttpStatus{
+        val user = getUser(request, uri)
+        val article:Article = articleRepository.findByArticleId(articleId) ?: throw IllegalException("게시글 번호가 유효하지 않습니다.", uri)
+        //유저 정보 & 게시글 주인 매칭
+        if (article.user != user)
+            throw IllegalException("권한이 없는 게시글입니다.", uri)
+
+        articleRepository.delete(article)
+
+        return HttpStatus.OK
+
 
     }
 }

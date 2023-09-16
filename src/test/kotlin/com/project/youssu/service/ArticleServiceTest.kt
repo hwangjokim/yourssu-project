@@ -1,6 +1,7 @@
 package com.project.youssu.service
 
 import com.project.youssu.dto.ArticleRequest
+import com.project.youssu.dto.DeleteAndWithdrawDTO
 import com.project.youssu.exception.IllegalException
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Assertions.*
@@ -8,6 +9,7 @@ import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.test.annotation.Commit
 import javax.transaction.Transactional
 
 
@@ -61,6 +63,14 @@ class ArticleServiceTest {
             updateArticle = service.updateArticle(request, "update", 9999999)
         }
 
+
+    }
+
+    @Test
+    @Commit
+    fun delete(){
+        val request = DeleteAndWithdrawDTO("yourssu@example.com","password")
+        service.deleteArticle(request, "temp", 16)
 
     }
 }

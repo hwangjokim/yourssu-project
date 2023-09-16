@@ -1,11 +1,7 @@
 package com.project.youssu.domain
 
 import java.time.LocalDateTime
-import javax.persistence.Entity
-import javax.persistence.GeneratedValue
-import javax.persistence.Id
-import javax.persistence.JoinColumn
-import javax.persistence.ManyToOne
+import javax.persistence.*
 
 @Entity
 data class Article(
@@ -16,7 +12,11 @@ data class Article(
     var updatedAt: LocalDateTime,
     var content: String,
     var title: String,
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
-    val user: User
+    val user: User,
+
+    @OneToMany(mappedBy = "article", cascade = [CascadeType.REMOVE], orphanRemoval = true)
+    val comments: MutableList<Comment> = mutableListOf()
+
 )
