@@ -1,10 +1,13 @@
 package com.project.youssu.service
 
 import com.project.youssu.domain.User
+import com.project.youssu.dto.DeleteAndWithdrawDTO
 import com.project.youssu.dto.UserRequest
 import com.project.youssu.dto.UserResponse
 import com.project.youssu.exception.IllegalException
 import com.project.youssu.repository.UserRepository
+import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
 import javax.transaction.Transactional
@@ -33,5 +36,12 @@ class UserService(private val repository: UserRepository) {
         repository.findByUsernameOrEmail(username, email) ?. let {
             throw IllegalException("중복된 사용자가 존재합니다.", uri)
         }
+    }
+
+    fun withdrawUser(request: DeleteAndWithdrawDTO, uri:String) : ResponseEntity<HttpStatus>{
+        val user = repository.findByEmailAndPassword(request.email, request.password)
+            ?: throw IllegalException("사용자 정보가 잘못되었습니다.", uri)
+        repository.delete(user)
+        return ResponseEntity(HttpStatus.OK)
     }
 }

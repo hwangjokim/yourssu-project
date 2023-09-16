@@ -1,13 +1,15 @@
 package com.project.youssu.controller
 
+import com.project.youssu.dto.DeleteAndWithdrawDTO
 import com.project.youssu.dto.UserRequest
 import com.project.youssu.dto.UserResponse
-import com.project.youssu.exception.IllegalException
 import com.project.youssu.exception.IllegalRequestParamException
 import com.project.youssu.service.UserService
 import org.slf4j.LoggerFactory
+import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
 import org.springframework.validation.BindingResult
-import org.springframework.validation.FieldError
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -17,12 +19,12 @@ import javax.validation.Valid
 
 
 @RestController
-@RequestMapping("/signup")
-class SignUpController(private val service: UserService) {
+@RequestMapping("/user")
+class UserController(private val service: UserService) {
 
     private val logger = LoggerFactory.getLogger(javaClass)!!
 
-    @PostMapping
+    @PostMapping("/signup")
     fun signUp(@RequestBody @Valid request: UserRequest,
                bindingResult: BindingResult,
                servletRequest: HttpServletRequest) : UserResponse{
@@ -30,5 +32,15 @@ class SignUpController(private val service: UserService) {
         if (bindingResult.hasErrors())
             throw IllegalRequestParamException(servletRequest, bindingResult)
         return service.signUp(request, servletRequest.requestURI)
+    }
+
+    @DeleteMapping("/withdraw")
+    fun withdraw(@RequestBody @Valid request: DeleteAndWithdrawDTO,
+                 bindingResult: BindingResult,
+                 servletRequest: HttpServletRequest) : ResponseEntity<HttpStatus>{
+        if (bindingResult.hasErrors())
+            throw IllegalRequestParamException(servletRequest, bindingResult)
+
+        return service.withdrawUser(request, servletRequest.requestURI)
     }
 }

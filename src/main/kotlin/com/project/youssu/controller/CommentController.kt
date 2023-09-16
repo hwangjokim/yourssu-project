@@ -6,6 +6,7 @@ import com.project.youssu.dto.DeleteAndWithdrawDTO
 import com.project.youssu.exception.IllegalRequestParamException
 import com.project.youssu.service.CommentService
 import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
 import org.springframework.validation.BindingResult
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -48,10 +49,10 @@ class CommentController (private val service: CommentService){
                       bindingResult: BindingResult,
                       servletRequest: HttpServletRequest,
                       @PathVariable articleId:Long,
-                      @PathVariable commentId: Long) : HttpStatus {
+                      @PathVariable commentId: Long) : ResponseEntity<HttpStatus> {
         if (bindingResult.hasErrors())
             throw IllegalRequestParamException(servletRequest, bindingResult)
         service.deleteComment(request, servletRequest.requestURI, articleId, commentId)
-        return HttpStatus.OK
+        return ResponseEntity(HttpStatus.OK)
     }
 }

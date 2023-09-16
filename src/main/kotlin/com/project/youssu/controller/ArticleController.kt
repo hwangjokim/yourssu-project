@@ -7,6 +7,7 @@ import com.project.youssu.exception.IllegalException
 import com.project.youssu.exception.IllegalRequestParamException
 import com.project.youssu.service.ArticleService
 import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
 import org.springframework.validation.BindingResult
 import org.springframework.validation.FieldError
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -49,11 +50,11 @@ class ArticleController(private val service: ArticleService) {
     fun deleteArticle(@RequestBody @Valid request: DeleteAndWithdrawDTO,
                       bindingResult: BindingResult,
                       servletRequest: HttpServletRequest,
-                      @PathVariable articleId:Long) : HttpStatus{
+                      @PathVariable articleId:Long) : ResponseEntity<HttpStatus> {
         if (bindingResult.hasErrors())
             throw IllegalRequestParamException(servletRequest, bindingResult)
 
         service.deleteArticle(request, servletRequest.requestURI, articleId)
-        return HttpStatus.OK
+        return ResponseEntity(HttpStatus.OK)
     }
 }
