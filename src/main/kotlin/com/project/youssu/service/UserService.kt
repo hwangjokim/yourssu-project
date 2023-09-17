@@ -4,6 +4,7 @@ import com.project.youssu.domain.User
 import com.project.youssu.dto.DeleteAndWithdrawDTO
 import com.project.youssu.dto.UserRequest
 import com.project.youssu.dto.UserResponse
+import com.project.youssu.exception.ErrorMessage
 import com.project.youssu.exception.IllegalException
 import com.project.youssu.repository.UserRepository
 import org.springframework.http.HttpStatus
@@ -35,14 +36,14 @@ class UserService(private val repository: UserRepository, private val encoder: P
 
     fun validateDuplication(username : String, email: String, uri: String){
         repository.findByUsernameOrEmail(username, email) ?. let {
-            throw IllegalException("중복된 사용자가 존재합니다.", uri)
+            throw IllegalException(ErrorMessage.DUPLICATED_USER.message, uri)
         }
     }
 
     fun withdrawUser(request: DeleteAndWithdrawDTO, uri:String) : ResponseEntity<HttpStatus>{
         val user = repository.findByEmail(request.email)
         user?.takeIf { encoder.matches(request.password, user.password) }
-            ?: throw IllegalException("사용자 정보가 일치하지 않습니다.", uri)
+            ?: throw IllegalException(ErrorMessage.WRONG_USER_INFO.message, uri)
         repository.delete(user)
         return ResponseEntity(HttpStatus.OK)
     }

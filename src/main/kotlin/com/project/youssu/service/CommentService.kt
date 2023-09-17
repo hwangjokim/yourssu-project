@@ -5,6 +5,7 @@ import com.project.youssu.domain.User
 import com.project.youssu.dto.CommentRequest
 import com.project.youssu.dto.CommentResponse
 import com.project.youssu.dto.DeleteAndWithdrawDTO
+import com.project.youssu.exception.ErrorMessage
 import com.project.youssu.exception.IllegalException
 import com.project.youssu.repository.ArticleRepository
 import com.project.youssu.repository.CommentRepository
@@ -37,12 +38,12 @@ class CommentService(private val repository: CommentRepository,
     }
 
     fun updateComment(request: CommentRequest, uri: String, articleId: Long, commentId: Long) : CommentResponse{
-        val comment = repository.findByCommentId(commentId) ?: throw IllegalException("댓글 번호가 잘못되었습니다.", uri)
+        val comment = repository.findByCommentId(commentId) ?: throw IllegalException(ErrorMessage.COMMENT_NOT_FOUND.message, uri)
         val user = getUser(request, uri)
         if (user != comment.user)
-            throw IllegalException("권한이 없는 댓글입니다.", uri)
+            throw IllegalException(ErrorMessage.PERMISSION_DENIED.message, uri)
         if (comment.article.articleId != articleId)
-            throw IllegalException("댓글과 게시글 위치가 일치하지 않습니다.", uri)
+            throw IllegalException(ErrorMessage.ARTICLE_COMMENT_NOT_MATCH.message, uri)
 
         comment.content = request.content
         comment.updatedAt = LocalDateTime.now()
@@ -51,12 +52,12 @@ class CommentService(private val repository: CommentRepository,
     }
 
     fun deleteComment(request : DeleteAndWithdrawDTO, uri:String, articleId: Long, commentId: Long) : HttpStatus{
-        val comment = repository.findByCommentId(commentId) ?: throw IllegalException("댓글 번호가 잘못되었습니다.", uri)
+        val comment = repository.findByCommentId(commentId) ?: throw IllegalException(ErrorMessage.COMMENT_NOT_FOUND.message, uri)
         val user = getUser(request, uri)
         if (user != comment.user)
-            throw IllegalException("권한이 없는 댓글입니다.", uri)
+            throw IllegalException(ErrorMessage.PERMISSION_DENIED.message, uri)
         if (comment.article.articleId != articleId)
-            throw IllegalException("댓글과 게시글 위치가 일치하지 않습니다.", uri)
+            throw IllegalException(ErrorMessage.ARTICLE_COMMENT_NOT_MATCH.message, uri)
         repository.delete(comment)
         return HttpStatus.OK
     }
@@ -65,14 +66,14 @@ class CommentService(private val repository: CommentRepository,
     private fun getUser(request: CommentRequest, uri: String): User {
         val user = userRepository.findByEmail(request.email)
         return user?.takeIf { encoder.matches(request.password, user.password) }
-            ?: throw IllegalException("사용자 정보가 일치하지 않습니다.", uri)
+            ?: throw IllegalException(ErrorMessage.WRONG_USER_INFO.message, uri)
     }
     private fun getUser(request: DeleteAndWithdrawDTO, uri: String): User {
         val user = userRepository.findByEmail(request.email)
         return user?.takeIf { encoder.matches(request.password, user.password) }
-            ?: throw IllegalException("사용자 정보가 일치하지 않습니다.", uri)
+            ?: throw IllegalException(ErrorMessage.WRONG_USER_INFO.message, uri)
     }
 
     private fun getArticle(articleId: Long, uri: String) =
-        articleRepository.findByArticleId(articleId) ?: throw IllegalException("존재하지 않는 게시글입니다.", uri)
+        articleRepository.findByArticleId(articleId) ?: throw IllegalException(ErrorMessage.ARTICLE_NOT_FOUND.message, uri)
 }

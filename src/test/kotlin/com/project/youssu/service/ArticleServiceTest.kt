@@ -2,6 +2,7 @@ package com.project.youssu.service
 
 import com.project.youssu.dto.ArticleRequest
 import com.project.youssu.dto.DeleteAndWithdrawDTO
+import com.project.youssu.exception.ErrorMessage
 import com.project.youssu.exception.IllegalException
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Assertions.*
@@ -34,7 +35,7 @@ class ArticleServiceTest {
         var error = org.junit.jupiter.api.Assertions.assertThrows(IllegalException::class.java){
             service.saveArticle(request, "uri")
         }
-        Assertions.assertThat(error.message).isEqualTo("사용자 정보가 일치하지 않습니다.")
+        Assertions.assertThat(error.message).isEqualTo(ErrorMessage.WRONG_USER_INFO.message)
 
         request = ArticleRequest("yourssu@example", "password", "", "내용입니다") //내용 부재
         error = org.junit.jupiter.api.Assertions.assertThrows(IllegalException::class.java){

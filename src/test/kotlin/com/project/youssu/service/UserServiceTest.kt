@@ -1,6 +1,7 @@
 package com.project.youssu.service
 
 import com.project.youssu.dto.UserRequest
+import com.project.youssu.exception.ErrorMessage
 import com.project.youssu.exception.IllegalException
 import org.assertj.core.api.Assertions
 
@@ -42,7 +43,7 @@ class UserServiceTest() {
             service.signUp(second, "/signup")
         }
 
-        Assertions.assertThat(error.message).isEqualTo("중복된 사용자가 존재합니다.")
+        Assertions.assertThat(error.message).isEqualTo(ErrorMessage.DUPLICATED_USER.message)
 
     }
 
