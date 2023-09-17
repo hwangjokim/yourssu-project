@@ -1,11 +1,7 @@
 package com.project.youssu.domain
 
 import java.time.LocalDateTime
-import javax.persistence.CascadeType
-import javax.persistence.Entity
-import javax.persistence.GeneratedValue
-import javax.persistence.Id
-import javax.persistence.OneToMany
+import javax.persistence.*
 
 @Entity
 data class User(

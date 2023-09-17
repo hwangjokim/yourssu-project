@@ -62,9 +62,6 @@ class ArticleService(private val articleRepository: ArticleRepository,
             throw IllegalException("권한이 없는 게시글입니다.", uri)
 
         articleRepository.delete(article)
-
         return HttpStatus.OK
-
-
     }
 }

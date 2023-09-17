@@ -5,15 +5,10 @@ import com.project.youssu.dto.UserRequest
 import com.project.youssu.dto.UserResponse
 import com.project.youssu.exception.IllegalRequestParamException
 import com.project.youssu.service.UserService
-import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.validation.BindingResult
-import org.springframework.web.bind.annotation.DeleteMapping
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import javax.servlet.http.HttpServletRequest
 import javax.validation.Valid
 
@@ -21,8 +16,6 @@ import javax.validation.Valid
 @RestController
 @RequestMapping("/user")
 class UserController(private val service: UserService) {
-
-    private val logger = LoggerFactory.getLogger(javaClass)!!
 
     @PostMapping("/signup")
     fun signUp(@RequestBody @Valid request: UserRequest,

@@ -2,10 +2,9 @@ package com.project.youssu.service
 
 import com.project.youssu.domain.Comment
 import com.project.youssu.domain.User
-import com.project.youssu.dto.ArticleRequest
-import com.project.youssu.dto.DeleteAndWithdrawDTO
 import com.project.youssu.dto.CommentRequest
 import com.project.youssu.dto.CommentResponse
+import com.project.youssu.dto.DeleteAndWithdrawDTO
 import com.project.youssu.exception.IllegalException
 import com.project.youssu.repository.ArticleRepository
 import com.project.youssu.repository.CommentRepository
