@@ -8,6 +8,7 @@ import com.project.youssu.exception.IllegalException
 import com.project.youssu.repository.UserRepository
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
 import javax.transaction.Transactional
@@ -15,7 +16,7 @@ import javax.transaction.Transactional
 
 @Service
 @Transactional
-class UserService(private val repository: UserRepository) {
+class UserService(private val repository: UserRepository, private val encoder: PasswordEncoder) {
 
     fun signUp(request : UserRequest, uri : String) : UserResponse{
         validateDuplication(request.username, request.email, uri)
@@ -25,7 +26,7 @@ class UserService(private val repository: UserRepository) {
                 createdAt = LocalDateTime.now(),
                 updatedAt = LocalDateTime.now(),
                 email = request.email,
-                password = request.password,
+                password = encoder.encode(request.password),
                 username = request.username
             )
         )
@@ -39,8 +40,9 @@ class UserService(private val repository: UserRepository) {
     }
 
     fun withdrawUser(request: DeleteAndWithdrawDTO, uri:String) : ResponseEntity<HttpStatus>{
-        val user = repository.findByEmailAndPassword(request.email, request.password)
-            ?: throw IllegalException("사용자 정보가 잘못되었습니다.", uri)
+        val user = repository.findByEmail(request.email)
+        user?.takeIf { encoder.matches(request.password, user.password) }
+            ?: throw IllegalException("사용자 정보가 일치하지 않습니다.", uri)
         repository.delete(user)
         return ResponseEntity(HttpStatus.OK)
     }

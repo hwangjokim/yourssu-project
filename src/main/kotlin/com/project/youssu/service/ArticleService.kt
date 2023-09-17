@@ -9,6 +9,7 @@ import com.project.youssu.exception.IllegalException
 import com.project.youssu.repository.ArticleRepository
 import com.project.youssu.repository.UserRepository
 import org.springframework.http.HttpStatus
+import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
 import javax.transaction.Transactional
@@ -17,7 +18,8 @@ import javax.transaction.Transactional
 @Service
 @Transactional
 class ArticleService(private val articleRepository: ArticleRepository,
-                     private val userRepository: UserRepository) {
+                     private val userRepository: UserRepository,
+                     private val encoder: PasswordEncoder) {
 
     fun saveArticle(request: ArticleRequest, uri:String) : ArticleResponse{
         val user = getUser(request, uri)
@@ -27,12 +29,14 @@ class ArticleService(private val articleRepository: ArticleRepository,
     }
 
     private fun getUser(request: ArticleRequest, uri: String): User {
-        return userRepository.findByEmailAndPassword(request.email, request.password)
+        val user = userRepository.findByEmail(request.email)
+        return user?.takeIf { encoder.matches(request.password, user.password) }
             ?: throw IllegalException("사용자 정보가 일치하지 않습니다.", uri)
     }
 
     private fun getUser(request: DeleteAndWithdrawDTO, uri: String): User {
-        return userRepository.findByEmailAndPassword(request.email, request.password)
+        val user = userRepository.findByEmail(request.email)
+        return user?.takeIf { encoder.matches(request.password, user.password) }
             ?: throw IllegalException("사용자 정보가 일치하지 않습니다.", uri)
     }
 

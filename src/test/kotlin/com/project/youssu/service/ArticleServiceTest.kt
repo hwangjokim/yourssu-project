@@ -67,10 +67,11 @@ class ArticleServiceTest {
     }
 
     @Test
-    @Commit
     fun delete(){
-        val request = DeleteAndWithdrawDTO("yourssu@example.com","password")
-        service.deleteArticle(request, "temp", 16)
+        var savedRequest:ArticleRequest = ArticleRequest("yourssu@example.com", "password", "제목입니다", "내용입니다")
+        var result = service.saveArticle(savedRequest, "uri")
 
+        val request = DeleteAndWithdrawDTO("yourssu@example.com","password")
+        service.deleteArticle(request, "temp", result.articleId)
     }
 }

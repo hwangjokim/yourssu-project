@@ -1,6 +1,8 @@
 package com.project.youssu.service
 
 import com.project.youssu.domain.Comment
+import com.project.youssu.domain.User
+import com.project.youssu.dto.ArticleRequest
 import com.project.youssu.dto.DeleteAndWithdrawDTO
 import com.project.youssu.dto.CommentRequest
 import com.project.youssu.dto.CommentResponse
@@ -9,6 +11,7 @@ import com.project.youssu.repository.ArticleRepository
 import com.project.youssu.repository.CommentRepository
 import com.project.youssu.repository.UserRepository
 import org.springframework.http.HttpStatus
+import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
 import javax.transaction.Transactional
@@ -17,7 +20,8 @@ import javax.transaction.Transactional
 @Transactional
 class CommentService(private val repository: CommentRepository,
                     private val articleRepository: ArticleRepository,
-                    private val userRepository: UserRepository) {
+                    private val userRepository: UserRepository,
+                    private val encoder: PasswordEncoder) {
     fun saveComment(request: CommentRequest, uri: String, articleId: Long): CommentResponse {
         val article = getArticle(articleId, uri)
         val user = getUser(request, uri)
@@ -58,13 +62,17 @@ class CommentService(private val repository: CommentRepository,
         return HttpStatus.OK
     }
 
-    private fun getUser(request: CommentRequest, uri: String) =
-        userRepository.findByEmailAndPassword(request.email, request.password)
-            ?: throw IllegalException("유저 정보가 잘못되었습니다.", uri)
 
-    private fun getUser(request: DeleteAndWithdrawDTO, uri: String) =
-        userRepository.findByEmailAndPassword(request.email, request.password)
-            ?: throw IllegalException("유저 정보가 잘못되었습니다.", uri)
+    private fun getUser(request: CommentRequest, uri: String): User {
+        val user = userRepository.findByEmail(request.email)
+        return user?.takeIf { encoder.matches(request.password, user.password) }
+            ?: throw IllegalException("사용자 정보가 일치하지 않습니다.", uri)
+    }
+    private fun getUser(request: DeleteAndWithdrawDTO, uri: String): User {
+        val user = userRepository.findByEmail(request.email)
+        return user?.takeIf { encoder.matches(request.password, user.password) }
+            ?: throw IllegalException("사용자 정보가 일치하지 않습니다.", uri)
+    }
 
     private fun getArticle(articleId: Long, uri: String) =
         articleRepository.findByArticleId(articleId) ?: throw IllegalException("존재하지 않는 게시글입니다.", uri)
